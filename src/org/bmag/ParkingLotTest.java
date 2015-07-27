@@ -2,6 +2,8 @@ package org.bmag;
 
 import org.junit.Test;
 
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 public class ParkingLotTest {
@@ -35,5 +37,23 @@ public class ParkingLotTest {
         p.park(new Car(1, "G07"));
         p.park(new Car(1, "G07"));
 
+    }
+
+    @Test(expected = org.bmag.CarNotFoundException.class)
+    public void testUnparkFail() {
+        ParkingLot p = new ParkingLot(2, 0);
+
+        Car c = p.unPark(1);
+    }
+
+    @Test
+    public void testUnparkIfCarExists() {
+        ParkingLot p = new ParkingLot(2, 0);
+
+        Car c1 = new Car(1, "G09");
+        p.park(c1);
+
+        Car c2 = p.unPark(1);
+        assertEquals(c1, c2);
     }
 }

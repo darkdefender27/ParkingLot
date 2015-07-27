@@ -39,17 +39,4 @@ public class Car {
         result = 31 * result + getCarNumber().hashCode();
         return result;
     }
-
-    /*@Override
-    public boolean equals(Object obj) {
-
-        boolean result=false;
-        Car c1 = (Car) obj;
-
-        if(c1.carId==this.carId) {
-            result=true;
-        }
-
-        return result;
-    }*/
 }

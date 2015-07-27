@@ -15,6 +15,10 @@ public class ParkingLot {
         this.lotMap = new HashMap<>();
     }
 
+    public Map<Integer, Car> getLotMap() {
+        return lotMap;
+    }
+
     public int park(Car c) {
         this.tokenizer++;
         if(this.tokenizer>lotSize ) {
@@ -31,4 +35,22 @@ public class ParkingLot {
 
         }
     }
+
+    public Car unPark(int tokenId) {
+
+        if(!this.lotMap.containsKey(tokenId))
+            throw new CarNotFoundException("No such CAR exists!");
+
+        Car c = this.lotMap.remove(tokenId);
+
+
+        //CHECK DOCS FOR THIS.. CONCURRENCY!
+       /* Car c1 = this.lotMap.remove(tokenId);
+
+        if(c1==null)
+            throw new CarNotFoundException("No CAR exists");*/
+
+        return c;
+    }
+
 }
