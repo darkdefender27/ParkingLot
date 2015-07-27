@@ -5,11 +5,13 @@ import java.util.Map;
 
 public class ParkingLot {
 
+    private PLOwner plOwner;
     private final int lotSize;
     private int tokenizer;
     private Map<Integer, Car> lotMap;
 
-    public ParkingLot(int lotSize, int tokenizer) {
+    public ParkingLot(PLOwner plOwner, int lotSize, int tokenizer) {
+        this.plOwner = plOwner;
         this.lotSize=lotSize;
         this.tokenizer=tokenizer;
         this.lotMap = new HashMap<>();
@@ -30,10 +32,15 @@ public class ParkingLot {
             }
             else {
                 lotMap.put(tokenizer, c);
+                if(lotMap.size()==lotSize) {
+                    plOwner.onFull();
+                }
                 return tokenizer;
             }
 
         }
+
+
     }
 
     public Car unPark(int tokenId) {

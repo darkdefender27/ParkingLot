@@ -1,5 +1,6 @@
 package org.bmag;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
@@ -8,9 +9,15 @@ import static org.junit.Assert.*;
 
 public class ParkingLotTest {
 
+    @Before
+    public void setUp() {
+        PLOwner plOwner;
+    }
+
     @Test
     public void testParkSuccess() {
-        ParkingLot p1 = new ParkingLot(2, 0);
+        PLOwner plOwner=new PLOwner();
+        ParkingLot p1 = new ParkingLot(plOwner, 2, 0);
 
         Car c1 = new Car(1, "G07");
         int token1 = p1.park(c1);
@@ -23,7 +30,8 @@ public class ParkingLotTest {
 
     @Test(expected = org.bmag.LotFullException.class)
     public void testParkFail() {
-        ParkingLot p1 = new ParkingLot(2, 0);
+        PLOwner plOwner=new PLOwner();
+        ParkingLot p1 = new ParkingLot(plOwner, 2, 0);
 
         p1.park(new Car(1, "G07"));
         p1.park(new Car(2, "G08"));
@@ -32,7 +40,8 @@ public class ParkingLotTest {
 
     @Test(expected = org.bmag.UniqueCarException.class)
     public void testParkDuplicate() {
-        ParkingLot p = new ParkingLot(2, 0);
+        PLOwner plOwner=new PLOwner();
+        ParkingLot p = new ParkingLot(plOwner, 2, 0);
 
         p.park(new Car(1, "G07"));
         p.park(new Car(1, "G07"));
@@ -41,19 +50,32 @@ public class ParkingLotTest {
 
     @Test(expected = org.bmag.CarNotFoundException.class)
     public void testUnparkFail() {
-        ParkingLot p = new ParkingLot(2, 0);
+        PLOwner plOwner=new PLOwner();
+        ParkingLot p = new ParkingLot(plOwner, 2, 0);
 
         Car c = p.unPark(1);
     }
 
     @Test
     public void testUnparkIfCarExists() {
-        ParkingLot p = new ParkingLot(2, 0);
+        PLOwner plOwner=new PLOwner();
+        ParkingLot p = new ParkingLot(plOwner, 2, 0);
 
         Car c1 = new Car(1, "G09");
         p.park(c1);
 
         Car c2 = p.unPark(1);
         assertEquals(c1, c2);
+    }
+
+    @Test
+    public void testOnFullNotification() {
+        TestPLOwner plOwner = new TestPLOwner();
+        ParkingLot p = new ParkingLot(plOwner, 1, 0);
+
+        Car c1 = new Car(1, "G09");
+        p.park(c1);
+
+        assertTrue(plOwner.isStatus());
     }
 }
