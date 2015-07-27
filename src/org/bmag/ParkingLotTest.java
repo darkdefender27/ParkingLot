@@ -27,4 +27,13 @@ public class ParkingLotTest {
         p1.park(new Car(2, "G08"));
         p1.park(new Car(3, "H08"));
     }
+
+    @Test(expected = org.bmag.UniqueCarException.class)
+    public void testParkDuplicate() {
+        ParkingLot p = new ParkingLot(2, 0);
+
+        p.park(new Car(1, "G07"));
+        p.park(new Car(1, "G07"));
+
+    }
 }

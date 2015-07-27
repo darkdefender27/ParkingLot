@@ -7,7 +7,7 @@ public class ParkingLot {
 
     private final int lotSize;
     private int tokenizer;
-    private Map<Car, Integer> lotMap;
+    private Map<Integer, Car> lotMap;
 
     public ParkingLot(int lotSize, int tokenizer) {
         this.lotSize=lotSize;
@@ -17,12 +17,18 @@ public class ParkingLot {
 
     public int park(Car c) {
         this.tokenizer++;
-        if(this.tokenizer>lotSize) {
+        if(this.tokenizer>lotSize ) {
             throw new LotFullException("Go Away! Parking is FULL!");
         }
         else {
-            lotMap.put(c, tokenizer);
-            return tokenizer;
+            if(lotMap.containsValue(c)) {
+                throw new UniqueCarException("Same Car getting parked TWICE! :/");
+            }
+            else {
+                lotMap.put(tokenizer, c);
+                return tokenizer;
+            }
+
         }
     }
 }
