@@ -1,24 +1,44 @@
 package org.bmag;
 
+import org.org.exceptions.CarNotFoundException;
+import org.org.exceptions.LotFullException;
+import org.org.exceptions.UniqueCarException;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ParkingLot {
 
-    private PLOwner plOwner;
+    private PLObserver plOwner;
+
+    private List<PLObserver> observerList;
     private final int lotSize;
     private int tokenizer;
     private Map<Integer, Car> lotMap;
 
-    public ParkingLot(PLOwner plOwner, int lotSize, int tokenizer) {
+    public ParkingLot(PLObserver plOwner, int lotSize, int tokenizer) {
         this.plOwner = plOwner;
         this.lotSize=lotSize;
         this.tokenizer=tokenizer;
-        this.lotMap = new HashMap<>();
+
+        this.lotMap = new HashMap<Integer, Car>();
+        this.observerList = new ArrayList<>();
     }
 
     public Map<Integer, Car> getLotMap() {
         return lotMap;
+    }
+
+    /**
+     * Register the new USERS to the LIST
+     * @param obvList
+     */
+    public void register(List<PLObserver> obvList) {
+        this.observerList = Stream.concat(this.observerList.stream(), obvList.stream()).collect(Collectors.toList());
     }
 
     public int park(Car c) {
@@ -32,7 +52,11 @@ public class ParkingLot {
             }
             else {
                 lotMap.put(tokenizer, c);
+                //LAST CAR TO ENTER
                 if(lotMap.size()==lotSize) {
+                    for(PLObserver ob: this.observerList) {
+                        ob.onFull();
+                    }
                     plOwner.onFull();
                 }
                 return tokenizer;
@@ -46,8 +70,12 @@ public class ParkingLot {
         if(!this.lotMap.containsKey(tokenId))
             throw new CarNotFoundException("No such CAR exists!");
 
-        if(lotMap.size()==lotSize)
+        if(lotMap.size()==lotSize) {
+            for(PLObserver ob: this.observerList) {
+                ob.onSpaceAvailable();
+            }
             plOwner.onSpaceAvailable();
+        }
 
         Car c = this.lotMap.remove(tokenId);
 

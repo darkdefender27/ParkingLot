@@ -1,6 +1,6 @@
 package org.bmag;
 
-public class PLOwner implements PLObserver{
+public class FBIAgent implements PLObserver{
 
     @Override
     public boolean checkStatus() {
