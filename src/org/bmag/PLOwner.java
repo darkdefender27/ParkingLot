@@ -5,4 +5,8 @@ public class PLOwner {
     public void onFull() {
 
     }
+
+    public void onSpaceAvailable() {
+
+    }
 }

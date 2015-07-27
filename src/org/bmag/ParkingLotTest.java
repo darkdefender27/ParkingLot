@@ -78,4 +78,17 @@ public class ParkingLotTest {
 
         assertTrue(plOwner.isStatus());
     }
+
+    @Test
+    public void testOnSpaceAvailabilityNotification() {
+        TestPLOwner plOwner = new TestPLOwner();
+        ParkingLot p = new ParkingLot(plOwner, 1, 0);
+
+        Car c1 = new Car(1, "G09");
+        p.park(c1);
+        Car c2 = p.unPark(1);
+
+        assertFalse(plOwner.isStatus());
+    }
+
 }

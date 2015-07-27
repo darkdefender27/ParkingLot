@@ -39,14 +39,15 @@ public class ParkingLot {
             }
 
         }
-
-
     }
 
     public Car unPark(int tokenId) {
 
         if(!this.lotMap.containsKey(tokenId))
             throw new CarNotFoundException("No such CAR exists!");
+
+        if(lotMap.size()==lotSize)
+            plOwner.onSpaceAvailable();
 
         Car c = this.lotMap.remove(tokenId);
 

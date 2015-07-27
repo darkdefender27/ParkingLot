@@ -9,6 +9,11 @@ public class TestPLOwner extends PLOwner{
 
     @Override
     public void onFull() {
-        this.status=true;
+        this.status = true;
+    }
+
+    @Override
+    public void onSpaceAvailable() {
+        this.status = false;
     }
 }
