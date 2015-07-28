@@ -8,7 +8,9 @@ import org.exceptions.LotFullException;
 import org.exceptions.UniqueCarException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -106,16 +108,37 @@ public class ParkingLotTest {
 
         ParkingLot p = new ParkingLot(per1, 1, 0);
 
-        p.subscribe(per1);
-        p.subscribe(per2);
-        p.subscribe(per3);
+        p.subscribe(per1, new SubscriptionStrategy() {
+            @Override
+            public boolean apply(PLEventEnum eventCode) {
+                if (eventCode == PLEventEnum.FULL) {
+                    return true;
+                } else if (eventCode == PLEventEnum.VACANT) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        p.subscribe(per2, new SubscriptionStrategy() {
+            @Override
+            public boolean apply(PLEventEnum eventCode) {
+                if (eventCode == PLEventEnum.EIGHTYCENT) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
 
         Car c1 = new Car(1, "G09");
         p.park(c1);
 
         assertEquals(PLEventEnum.FULL, per1.checkStatus());
-        assertEquals(PLEventEnum.FULL, per2.checkStatus());
-        assertEquals(PLEventEnum.FULL, per3.checkStatus());
+        assertNotEquals(PLEventEnum.FULL, per2.checkStatus());
+
     }
 
     @Test
@@ -128,18 +151,95 @@ public class ParkingLotTest {
 
         ParkingLot p = new ParkingLot(per1, 1, 0);
 
-        p.subscribe(per1);
-        p.subscribe(per2);
-        p.subscribe(per3);
+        p.subscribe(per1, new SubscriptionStrategy() {
+            @Override
+            public boolean apply(PLEventEnum eventCode) {
+                if (eventCode == PLEventEnum.FULL) {
+                    return true;
+                } else if (eventCode == PLEventEnum.VACANT) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        p.subscribe(per2, new SubscriptionStrategy() {
+            @Override
+            public boolean apply(PLEventEnum eventCode) {
+                if (eventCode == PLEventEnum.EIGHTYCENT) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
 
         Car c1 = new Car(1, "G09");
         p.park(c1);
         p.unPark(1);
 
         assertEquals(PLEventEnum.VACANT, per1.checkStatus());
-        assertEquals(PLEventEnum.VACANT, per2.checkStatus());
-        assertEquals(PLEventEnum.VACANT, per3.checkStatus());
+        assertNotEquals(PLEventEnum.VACANT, per2.checkStatus());
 
     }
+
+    @Test
+    public void testEightyPerCentNotification() {
+
+        Map<PLObserver, SubscriptionStrategy> obvList = new HashMap<>();
+
+        TestPLObserver per1 = new TestPLOwner();
+        TestPLObserver per2 = new TestFBIAgent();
+        TestPLObserver per3 = new TestFBIAgent();
+
+        ParkingLot p = new ParkingLot(per1, 1, 0);
+
+
+        p.subscribe(per1, new SubscriptionStrategy() {
+            @Override
+            public boolean apply(PLEventEnum eventCode) {
+                if (eventCode == PLEventEnum.FULL) {
+                    return true;
+                } else if (eventCode == PLEventEnum.VACANT) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        p.subscribe(per2, new SubscriptionStrategy() {
+            @Override
+            public boolean apply(PLEventEnum eventCode) {
+                if (eventCode == PLEventEnum.EIGHTYCENT) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        p.subscribe(per3, new SubscriptionStrategy() {
+            @Override
+            public boolean apply(PLEventEnum eventCode) {
+                if (eventCode == PLEventEnum.EIGHTYCENT) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        Car c1 = new Car(1, "G09");
+        p.park(c1);
+
+        assertNotEquals(PLEventEnum.EIGHTYCENT, per1.checkStatus());
+        assertEquals(PLEventEnum.EIGHTYCENT, per2.checkStatus());
+        assertEquals(PLEventEnum.EIGHTYCENT, per3.checkStatus());
+
+    }
+
+
 
 }

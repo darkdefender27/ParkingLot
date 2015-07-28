@@ -5,7 +5,7 @@ import org.bmag.PLObserver;
 
 
 public class TestPLOwner implements TestPLObserver {
-    private PLEventEnum status = PLEventEnum.VACANT;
+    private PLEventEnum status = PLEventEnum.DEFAULT;
 
     @Override
     public PLEventEnum checkStatus() {
@@ -22,6 +22,10 @@ public class TestPLOwner implements TestPLObserver {
 
             case VACANT:
                 this.status = PLEventEnum.VACANT;
+                break;
+
+            case EIGHTYCENT:
+                this.status = PLEventEnum.EIGHTYCENT;
                 break;
         }
     }
