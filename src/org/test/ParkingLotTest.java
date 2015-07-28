@@ -4,7 +4,7 @@ import org.bmag.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.exceptions.CarNotFoundException;
-import org.exceptions.LotFullException;
+import org.exceptions.ParkingSpaceFullException;
 import org.exceptions.UniqueCarException;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class ParkingLotTest {
         assertEquals(2, token2);
     }
 
-    @Test(expected = LotFullException.class)
+    @Test(expected = ParkingSpaceFullException.class)
     public void testParkFail() {
         PLOwner plOwner=new PLOwner();
         ParkingLot p1 = new ParkingLot(plOwner, 2, 0);

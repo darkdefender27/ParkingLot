@@ -1,12 +1,10 @@
 package org.bmag;
 
 import org.exceptions.CarNotFoundException;
-import org.exceptions.LotFullException;
+import org.exceptions.ParkingSpaceFullException;
 import org.exceptions.UniqueCarException;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ParkingLot {
 
@@ -27,6 +25,17 @@ public class ParkingLot {
         this.lotMap = new HashMap<Integer, Car>();
         this.observerList = new HashMap<PLObserver, SubscriptionStrategy>();
     }
+
+
+    public boolean isSpaceAvailable() {
+        if(this.lotMap.size() < this.lotSize) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
 
     /**
      * Register the new USERS to the LIST
@@ -58,8 +67,8 @@ public class ParkingLot {
 
     public int park(Car c) {
         this.tokenizer++;
-        if(this.tokenizer>lotSize ) {
-            throw new LotFullException("Go Away! Parking is FULL!");
+        if(this.lotMap.size()>=lotSize) {
+            throw new ParkingSpaceFullException("Go Away! Parking is FULL!");
         }
         else {
             if(lotMap.containsValue(c)) {
