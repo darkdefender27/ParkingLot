@@ -1,14 +1,11 @@
 package org.test;
 
-import org.bmag.Car;
-import org.bmag.PLObserver;
-import org.bmag.PLOwner;
-import org.bmag.ParkingLot;
+import org.bmag.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.org.exceptions.CarNotFoundException;
-import org.org.exceptions.LotFullException;
-import org.org.exceptions.UniqueCarException;
+import org.exceptions.CarNotFoundException;
+import org.exceptions.LotFullException;
+import org.exceptions.UniqueCarException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,51 +99,47 @@ public class ParkingLotTest {
 
     @Test
     public void testOnFullNotifyAll() {
-        List<PLObserver> notifierList = new ArrayList<PLObserver>();
 
-        PLObserver per1 = new TestPLOwner();
-        PLObserver per2 = new TestFBIAgent();
-        PLObserver per3 = new TestFBIAgent();
-
-        notifierList.add(per1);
-        notifierList.add(per2);
-        notifierList.add(per3);
+        TestPLObserver per1 = new TestPLOwner();
+        TestPLObserver per2 = new TestFBIAgent();
+        TestPLObserver per3 = new TestFBIAgent();
 
         ParkingLot p = new ParkingLot(per1, 1, 0);
-        p.register(notifierList);
+
+        p.subscribe(per1);
+        p.subscribe(per2);
+        p.subscribe(per3);
 
         Car c1 = new Car(1, "G09");
         p.park(c1);
 
-        for(PLObserver person: notifierList) {
-            assertTrue(person.checkStatus());
-        }
-
+        assertEquals(PLEventEnum.FULL, per1.checkStatus());
+        assertEquals(PLEventEnum.FULL, per2.checkStatus());
+        assertEquals(PLEventEnum.FULL, per3.checkStatus());
     }
 
     @Test
     public void testOnSpaceAvailableNotifyAll() {
         List<PLObserver> notifierList = new ArrayList<PLObserver>();
 
-        PLObserver per1 = new TestPLOwner();
-        PLObserver per2 = new TestFBIAgent();
-        PLObserver per3 = new TestFBIAgent();
-
-        notifierList.add(per1);
-        notifierList.add(per2);
-        notifierList.add(per3);
+        TestPLObserver per1 = new TestPLOwner();
+        TestPLObserver per2 = new TestFBIAgent();
+        TestPLObserver per3 = new TestFBIAgent();
 
         ParkingLot p = new ParkingLot(per1, 1, 0);
-        p.register(notifierList);
+
+        p.subscribe(per1);
+        p.subscribe(per2);
+        p.subscribe(per3);
 
         Car c1 = new Car(1, "G09");
         p.park(c1);
         p.unPark(1);
 
-        for(PLObserver person: notifierList) {
-            assertFalse(person.checkStatus());
-        }
-    }
+        assertEquals(PLEventEnum.VACANT, per1.checkStatus());
+        assertEquals(PLEventEnum.VACANT, per2.checkStatus());
+        assertEquals(PLEventEnum.VACANT, per3.checkStatus());
 
+    }
 
 }

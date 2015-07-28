@@ -1,8 +1,8 @@
 package org.bmag;
 
-import org.org.exceptions.CarNotFoundException;
-import org.org.exceptions.LotFullException;
-import org.org.exceptions.UniqueCarException;
+import org.exceptions.CarNotFoundException;
+import org.exceptions.LotFullException;
+import org.exceptions.UniqueCarException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,16 +29,39 @@ public class ParkingLot {
         this.observerList = new ArrayList<>();
     }
 
-    public Map<Integer, Car> getLotMap() {
-        return lotMap;
+    /**
+     * Register the new USERS to the LIST
+     * @param obv
+     */
+    public void subscribe(PLObserver obv) {
+        //this.observerList = Stream.concat(this.observerList.stream(), obvList.stream()).collect(Collectors.toList());
+        this.observerList.add(obv);
     }
 
     /**
-     * Register the new USERS to the LIST
-     * @param obvList
+     * Unregister observers from the List
+     * @param plObv
      */
-    public void register(List<PLObserver> obvList) {
-        this.observerList = Stream.concat(this.observerList.stream(), obvList.stream()).collect(Collectors.toList());
+    public void unRegister(PLObserver plObv) {
+        this.observerList.remove(plObv);
+    }
+
+    public void notifyCall(List<PLObserver> obvList, PLEventEnum eventCode){
+
+        switch(eventCode) {
+
+            case FULL:
+                for(PLObserver ob: obvList) {
+                    ob.notificationHandler(PLEventEnum.FULL);
+                }
+                break;
+
+            case VACANT:
+                for(PLObserver ob: obvList) {
+                    ob.notificationHandler(PLEventEnum.VACANT);
+                }
+                break;
+        }
     }
 
     public int park(Car c) {
@@ -54,10 +77,7 @@ public class ParkingLot {
                 lotMap.put(tokenizer, c);
                 //LAST CAR TO ENTER
                 if(lotMap.size()==lotSize) {
-                    for(PLObserver ob: this.observerList) {
-                        ob.onFull();
-                    }
-                    plOwner.onFull();
+                    notifyCall(this.observerList, PLEventEnum.FULL);
                 }
                 return tokenizer;
             }
@@ -71,10 +91,7 @@ public class ParkingLot {
             throw new CarNotFoundException("No such CAR exists!");
 
         if(lotMap.size()==lotSize) {
-            for(PLObserver ob: this.observerList) {
-                ob.onSpaceAvailable();
-            }
-            plOwner.onSpaceAvailable();
+            notifyCall(this.observerList, PLEventEnum.VACANT);
         }
 
         Car c = this.lotMap.remove(tokenId);

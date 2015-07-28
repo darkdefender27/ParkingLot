@@ -1,28 +1,28 @@
 package org.test;
 
+import org.bmag.PLEventEnum;
 import org.bmag.PLObserver;
 
-public class TestFBIAgent implements PLObserver {
+public class TestFBIAgent implements TestPLObserver {
 
-    private boolean status=false;
+    private PLEventEnum status = PLEventEnum.VACANT;
 
-    public boolean isStatus() {
+    @Override
+    public PLEventEnum checkStatus() {
         return status;
     }
 
     @Override
-    public boolean checkStatus() {
-        return status;
-    }
+    public void notificationHandler(PLEventEnum eventCode) {
+        switch(eventCode) {
 
-    @Override
-    public void onFull() {
-        this.status = true;
-    }
+            case FULL:
+                this.status = PLEventEnum.FULL;
+                break;
 
-    @Override
-    public void onSpaceAvailable() {
-        this.status = false;
+            case VACANT:
+                this.status = PLEventEnum.VACANT;
+                break;
+        }
     }
-
 }

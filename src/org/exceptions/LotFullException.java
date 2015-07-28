@@ -1,4 +1,4 @@
-package org.org.exceptions;
+package org.exceptions;
 
 public class LotFullException extends RuntimeException {
 
