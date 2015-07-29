@@ -13,29 +13,51 @@ public class Attendant {
         this.pSpace = pSapce;
     }
 
+    public ParkingLot chooseParkingLot() {
+
+        List<ParkingLot> plList = pSpace.getPlList();
+
+        if(plList.size()>0) {
+
+            ParkingLot maxSpacedPL = null;
+            int maxSpace = 0;
+
+            for(ParkingLot pLot : plList) {
+                if(pLot.isSpaceAvailable()) {
+                    int newMaxSpace = pLot.getAvailableLotSpace();
+                    if(newMaxSpace>maxSpace) {
+                        maxSpace = newMaxSpace;
+                        maxSpacedPL = pLot;
+                    }
+                }
+            }
+
+            if(maxSpace == 0) {
+                throw new ParkingSpaceFullException("PS is FULL!!");
+            }
+            else {
+                return maxSpacedPL;
+            }
+        }
+        else {
+            throw new ParkingSpaceFullException("NO Parking Lot Available!");
+        }
+
+    }
+
     public String park(Car c) {
-        String tokenString="";
 
         int plotNumber;
         int tokenNumber;
 
         List<ParkingLot> plList = pSpace.getPlList();
 
+        ParkingLot pLot = chooseParkingLot();
 
-        for(ParkingLot pLot : plList) {
-            if(pLot.isSpaceAvailable()) {
-                plotNumber = plList.indexOf(pLot);
-                tokenNumber = pLot.park(c);
-                tokenString = plotNumber + "-" + tokenNumber;
-                break;
-            }
-        }
+        plotNumber = plList.indexOf(pLot);
+        tokenNumber = pLot.park(c);
 
-        if(tokenString.equals("")) {
-            throw new ParkingSpaceFullException("GO!! GO!!!");
-        }
-
-        return tokenString;
+        return plotNumber + "-" + tokenNumber;
     }
 
     public Car unPark(String carToken) {
@@ -45,7 +67,7 @@ public class Attendant {
         int plotNumber = Integer.parseInt(args[0]);
         int tokenNumber = Integer.parseInt(args[1]);
 
-        if(plotNumber >= this.pSpace.getPlList().size()) {
+        if(plotNumber >= this.pSpace.getAvailablePLSize()) {
             throw new CarNotFoundException("CAR NOT FOUND!!");
         }
         else {

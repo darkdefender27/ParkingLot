@@ -111,4 +111,47 @@ public class AttendantTest {
         Car c = attendant.unPark("1-1");
 
     }
+
+    @Test
+    public void testMaxSpacedParkingLot() {
+
+        PLOwner plOwner=new PLOwner();
+        ParkingLot p1 = new ParkingLot(plOwner, 1, 0);
+        ParkingLot p2 = new ParkingLot(plOwner, 2, 0);
+
+        List<ParkingLot> plotList = new ArrayList<>();
+
+        plotList.add(p1);
+        plotList.add(p2);
+
+        ParkingSpace pSpace = new ParkingSpace(plotList);
+        Attendant attendant = new Attendant(pSpace);
+
+        Car c1 = new Car(1, "G07");
+        String tokenGenerated1 = attendant.park(c1);
+
+        assertEquals("1-1", tokenGenerated1);
+
+    }
+
+    @Test(expected = ParkingSpaceFullException.class)
+    public void testMaxSpacedParkingLotFailure() {
+
+
+        PLOwner plOwner=new PLOwner();
+        ParkingLot p1 = new ParkingLot(plOwner, 0, 0);
+        ParkingLot p2 = new ParkingLot(plOwner, 0, 0);
+
+        List<ParkingLot> plotList = new ArrayList<>();
+
+        plotList.add(p1);
+        plotList.add(p2);
+
+        ParkingSpace pSpace = new ParkingSpace(plotList);
+        Attendant attendant = new Attendant(pSpace);
+
+        Car c1 = new Car(1, "G07");
+        String tokenGenerated1 = attendant.park(c1);
+
+    }
 }

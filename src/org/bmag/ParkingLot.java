@@ -36,6 +36,10 @@ public class ParkingLot {
         }
     }
 
+    public int getAvailableLotSpace() {
+        return this.lotSize-this.lotMap.size();
+    }
+
 
     /**
      * Register the new USERS to the LIST

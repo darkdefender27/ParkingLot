@@ -15,4 +15,8 @@ public class ParkingSpace {
         return plList;
     }
 
+    public int getAvailablePLSize() {
+        return this.plList.size();
+    }
+
 }
